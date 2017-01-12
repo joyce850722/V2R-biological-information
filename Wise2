@@ -1,1 +1,91 @@
-Coding start from here.
+import os
+import subprocess
+"""
+str1 = " 1 2 3"
+arr = str1.strip().split(" ")
+for i in range(0,len(arr)):
+	aaa = int(arr[i])
+
+str1 = "result"
+str2 = "XP_001332214.6_KI635855n0.fa"
+
+os.system("genewise v2r.fasta %s/%s >exon/test01.txt" %(str1,str2))
+"""
+fr = open('zebrafish.aa.fa','r')
+data = fr.read()
+data_wr = data
+time = data.count(">")
+
+out_path = "exon"
+DATA_DIR = "result"
+path = DATA_DIR
+file_data = []
+
+#os.system("cd %s" %(path))
+
+v2r=0;
+for filename in os.listdir(DATA_DIR):
+	tmp_name = filename.replace(" ","_")
+	name_ed = tmp_name.find(".",1)
+	tmp_name = tmp_name[0:name_ed]
+	os.rename("%s/%s" %(DATA_DIR,filename),"%s/%s" %(DATA_DIR,tmp_name))
+	
+	print "loading %s" % tmp_name
+	file_data.append(tmp_name)
+	tmp = filename.find(" ")
+	v2r_name = filename[0:tmp]
+	#file_name = filename[tmp+1:]
+
+	v2r_st = data.find(v2r_name[v2r],0)
+	v2r_ed = data[v2r_st:].find(">")-1+v2r_st
+	print("V2R_st:%d V2R_ed:%d" %(v2r_st,v2r_ed))
+
+	data_wr = data[v2r_st-1:v2r_ed]
+	fw = open("v2r.fasta", "w")
+	fw.write(data_wr)
+	fw.close()
+	
+	os.system("genewise v2r.fasta %s/%s >exon/test.txt -genes" %(DATA_DIR,tmp_name))
+	#print("WISE2 %s %s" %(DATA_DIR,file_name))
+
+	fr_wise_out = open('exon/test.txt','r')
+	exon = fr_wise_out.read()
+	exon_st = exon.find("Exon")+5
+	exon_ed = exon.find("phase")-1
+	phase = exon[exon_ed + 7:-3]
+
+	exon_pos = []
+
+	exon = exon[exon_st:exon_ed]
+	exon_pos = exon.split(" ")
+
+	fr_dna = open('%s/%s' %(DATA_DIR,file_data[v2r]),'r')
+	dna = fr_dna.read()
+	dna_st = dna.find("\n")+1
+	dna_tag = dna[0:dna_st-1]
+
+	dna_tag = dna_tag +" exon "+ " ".join(exon_pos) +" phase "+phase
+	
+	for i in range(0,len(exon_pos)):
+		exon_pos[i] = int(exon_pos[i].strip())
+		print exon_pos[i]
+
+	dna = dna[dna_st:].replace("\n","")
+
+	for i in range(0,len(exon_pos),2):
+		dna_tmp = dna[exon_pos[i]-1:exon_pos[i+1]]
+
+		dna_exon = "".join(dna_tmp)
+
+	fw = open("%s/%s_exon.fasta" %(out_path,file_data[v2r]), "w")
+	result = dna_tag + dna_exon;
+	fw.write(result)
+
+	fr_wise_out.close()
+	fw.close()
+	fr_dna.close()
+	v2r = v2r+1
+
+fr.close()
+
+#os.system("pause")
