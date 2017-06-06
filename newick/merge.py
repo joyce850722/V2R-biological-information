@@ -32,7 +32,7 @@ def merge_br(filename, st, ed):
                 count = count+1
                 tmp = ""
                 for i in range(0,len(br)):
-                    tmp = tmp + br[i][:br[i].rfind(":")-1] + "|"
+                    tmp = tmp + br[i][:br[i].rfind(":")] + "|"
                 tmp = tmp[:-1] + pe_di[pe_di.find(":"):]
                 data = data.replace(match.group(0),tmp[1:-1],1)
                 #print(tmp1,tmp2)
