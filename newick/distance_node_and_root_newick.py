@@ -44,7 +44,7 @@ def combin_root():
     while length != 0 :
         #find which can combin
         res = r"(\([^\()!]*\)):([0-9]+.[0-9]*)"
-        data = read_file("node1.nwk")
+        data = read_file(r"output\distance_output.nwk")
         combin = re.findall(res, data)
         length = len(combin)
         #split the scequence to get I want
@@ -75,12 +75,12 @@ def combin_root():
                                 newcombin = newcombin+","
                     j = j+1
                 #save the conbin data
-                data_change = read_file("node1.nwk")
+                data_change = read_file(r"output\distance_output.nwk")
                 res = r"(\([^\()!']*\)[0-9||\.||:]*)"
                 combin = re.findall(res, data)
                 data_change = data_change.replace(combin[i],newcombin)
                 #output the file
-                save_file("node1.nwk",data_change)
+                save_file(r"output\distance_output.nwk",data_change)
                 length = length +1
             else:
                 length = length -1
@@ -88,23 +88,34 @@ def combin_root():
     return data_change
 
 def Filterdistance(path, node, distance):
+    if (node == "root" and os.path.isfile(r"output\root_point.txt")):
+        os.remove("output\root_point.txt")
+
+    if (node != "root" and os.path.isfile(r"output\point_point.txt")):
+        os.remove("output\point_point.txt")
+        
     data = read_file(path)
     data = replace_special(data)
     data = remove_probable(data)
-    save_file("node1.nwk",data)
+    save_file(r"output\distance_output.nwk",data)
     data = combin_root()
+    tree = Phylo.read(r"output\distance_output.nwk", "newick")
+    
     if node == "root":
         res = r"([^\()!:,]*):([0-9]+.[0-9]*)"
         scequence = re.findall(res, data)
         i = 0
         for item in scequence:
             if float(item[1]) <= float(distance):
-                fw = open("output.txt", "a")
+                tree.clade[i].color = "red"
+                
+                fw = open(r"output\root_point.txt", "a")
                 fw.write(str(item[0]))
                 fw.write(':')
                 fw.write(str(item[1]))
                 fw.write('\n')
                 fw.close()
+                
             i = i + 1
     else:
         #篩選出小於distance的node
@@ -113,7 +124,7 @@ def Filterdistance(path, node, distance):
         end = 0
         while end == 0:
             res = r"(\([^\()!]*\)):([0-9]+.[0-9]*)"
-            data = read_file("node1.nwk")
+            data = read_file(r"output\distance_output.nwk")
             scequence = re.findall(res, data)
             if len(scequence)==0:
                 res = r"([^\()!]*:[0-9]+.[0-9]*)"
@@ -143,32 +154,39 @@ def Filterdistance(path, node, distance):
                             other_distance = float(scequence[node_position+1]) + float(scequence[j+1])
                             #進行篩選，小於等於篩選長度將序列名及距離輸出至output_node
                             if float(other_distance) <= float(distance):
-                                fw = open("output2.txt", "a")
+                                mrca = tree.common_ancestor({"name": item})
+                                mrca.color = "red"
+                                
+                                fw = open(r"output\point_point.txt", "a")
                                 fw.write(item)
                                 fw.write(':')
                                 fw.write(str(other_distance))
                                 fw.write('\n')
                                 fw.close()
+                                
                         #是比較點則距離等於自己
                         else:
                             if end == 1:
+                                mrca = tree.common_ancestor({"name": item})
+                                mrca.color = "red"
+                                
                                 node_distance = 0
-                                fw = open("output2.txt", "a")
+                                fw = open(r"output\point_point.txt", "a")
                                 fw.write(item)
                                 fw.write(':')
                                 fw.write(str(node_distance))
                                 fw.write('\n')
                                 fw.close()
+                                
                             else:
                                 node_distance = float(node_distance) + float(scequence[outside_distance_position])                
                     j = j + 1
                 #更新node1.nwk
                 res = r"(\([^\()!]*\):[0-9]+.[0-9]*)"
-                data = read_file("node1.nwk")
+                data = read_file(r"output\distance_output.nwk")
                 data_change = re.sub(res,(node+":"+str(node_distance)),data)
-                save_file("node1.nwk",data_change)
+                save_file(r"output\distance_output.nwk",data_change)
             else:
                 print("沒有你輸入的點")      
 
-    tree = Phylo.read("node1.nwk", "newick")
     Phylo.draw(tree, branch_labels=lambda c: c.branch_length)

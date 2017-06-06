@@ -39,25 +39,6 @@ def merge_br(filename, st, ed):
                 #print (match.groups(i+1))
         print(count)
 
-    fw = open("output.nwk","w")
+    fw = open("output\merge_output.nwk","w")
     fw.write(data)
     fw.close()
-    filename = "output.nwk"
-"""
-st = int(input("匹配起始位置："))
-ed = int(input("匹配結束位置："))
-filename = "testData\V2R_rootedML_0222.nwk"#input("請輸入檔案名稱(含附檔名)：")
-merge_br(filename, st, ed)
-
-    res = "\)[0-9||.]*:"
-    pattern = re.compile(res)
-    for i, line in enumerate(open(filename)):
-            for match in re.finditer(pattern, line):
-                 tmp_str = match.group(i)
-                 data = data.replace(str(tmp_str),"):")
-
-    fw = open("output.nwk","w")
-    fw.write(data)
-    fw.close()
-    filename = "output.nwk"
-"""

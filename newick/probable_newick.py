@@ -1,6 +1,5 @@
 import re
 import os
-from Bio import Phylo
 
 def probable(path, value):
     #path = input("請輸入檔案...\n") #V2R_rootedML_0222.nwk
@@ -43,9 +42,6 @@ def probable(path, value):
         nowdata = match.group(0).replace(match.group(1), ")")
         data = data.replace(match.group(0), nowdata)
 
-    fw = open("output.nwk", "w")
+    fw = open("output\probable_output.nwk", "w")
     fw.write(data)
     fw.close()
-
-    tree = Phylo.read("output.nwk", "newick")
-    Phylo.draw(tree, branch_labels=lambda c: c.branch_length)
