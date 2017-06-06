@@ -6,6 +6,7 @@ import os
 import wx
 import locale
 import newick_GUI
+from Bio import Phylo
 import merge
 import probable_newick as p_n
 import distance_node_and_root_newick as d_n
@@ -20,15 +21,15 @@ class Practice(newick_GUI.MyFrame1):
 	def OpenfileButton(self, event):
 		openFileDialog = wx.FileDialog(self, "Open", "", "", "Newick files (*.nwk)|*.nwk", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 		openFileDialog.ShowModal()		
-		self.path = openFileDialog.GetPath()
-
-		#tree = Phylo.read(self.path, "newick")
-		#Phylo.draw(tree, branch_labels=lambda c: c.branch_length)		
+		self.path = openFileDialog.GetPath()		
 		
 	def MergeButtonClick( self, event ):
 		st = int(self.merge_st.GetValue())
 		ed = int(self.merge_ed.GetValue())
 		merge.merge_br(self.path, st, ed)
+
+		tree = Phylo.read("output.nwk", "newick")
+		Phylo.draw(tree, branch_labels=lambda c: c.branch_length)
 		
 	def ProbableButtonClick( self, event ):		
 		value = float(self.value.GetValue())
