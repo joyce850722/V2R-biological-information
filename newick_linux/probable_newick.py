@@ -1,10 +1,8 @@
+# -*- coding: utf-8 -*-  
 import re
 import os
 
 def probable(path, value):
-    #path = input("請輸入檔案...\n") #V2R_rootedML_0222.nwk
-    #value = float(input("請輸入門檻值...\n"))
-
     fr = open(path, "r")
     data = fr.read().replace("'", "")
 
@@ -42,6 +40,6 @@ def probable(path, value):
         nowdata = match.group(0).replace(match.group(1), ")")
         data = data.replace(match.group(0), nowdata)
 
-    fw = open("output\probable_output.nwk", "w")
+    fw = open(r"output/probable_output.nwk", "w")
     fw.write(data)
     fw.close()

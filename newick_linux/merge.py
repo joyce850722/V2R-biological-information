@@ -8,9 +8,6 @@ def checkEqual(array,st,ed):
             return False
     return True
 def merge_br(filename, st, ed):
-    #st = int(input("匹配起始位置："))
-    #ed = int(input("匹配結束位置："))
-    #filename = "V2R_rootedML_0222.nwk"#input("請輸入檔案名稱(含附檔名)：")
     fr = open(filename,"r")
     data = fr.read()
     fr.close()
@@ -26,8 +23,7 @@ def merge_br(filename, st, ed):
             mh_str = match.group(1)
             pe_di = match.group(2)
             br = mh_str.split(",")
-            #seq_name.append(br[0][:br[0].find(":")])
-            #br[0] = br[0][st:ed+1]
+            
             if checkEqual(br,st,ed) == True:
                 count = count+1
                 tmp = ""
@@ -35,10 +31,9 @@ def merge_br(filename, st, ed):
                     tmp = tmp + br[i][:br[i].rfind(":")] + "|"
                 tmp = tmp[:-1] + pe_di[pe_di.find(":"):]
                 data = data.replace(match.group(0),tmp[1:-1],1)
-                #print(tmp1,tmp2)
-                #print (match.groups(i+1))
+                
         print(count)
 
-    fw = open("output\merge_output.nwk","w")
+    fw = open(r"output/merge_output.nwk","w")
     fw.write(data)
     fw.close()
