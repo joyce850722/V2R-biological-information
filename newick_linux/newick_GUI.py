@@ -30,7 +30,6 @@ class MyFrame1 ( wx.Frame ):
 		gSizer2.Add( self.choseFile, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_button6 = wx.Button( self, wx.ID_ANY, u"?", wx.DefaultPosition, wx.Size( 20,20 ), 0 )
-		self.m_button6.SetFont( wx.Font( 9, 72, 90, 92, False, "新細明體" ) )
 		self.m_button6.SetForegroundColour( wx.Colour( 255, 0, 0 ) )
 		self.m_button6.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_3DLIGHT ) )
 		
